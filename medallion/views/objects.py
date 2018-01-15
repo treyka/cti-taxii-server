@@ -1,7 +1,6 @@
-import json
-
 import flask
 from flask import Blueprint, Response, abort, request
+import json
 
 from medallion import auth, get_backend
 from medallion.utils import common
@@ -20,7 +19,7 @@ def permission_to_write(api_root, collection_id):
     return collection_info["can_write"]
 
 
-@mod.route("/<string:api_root>/collections/<string:id_>/objects/", methods=["GET", "POST"])
+@mod.route("/taxii/<string:api_root>/collections/<string:id_>/objects/", methods=["GET", "POST"])
 @auth.login_required
 def get_or_add_objects(api_root, id_):
     # TODO: Check if user has access to read or write objects in collection - right now just check for permissions on the collection.
@@ -40,13 +39,7 @@ def get_or_add_objects(api_root, id_):
         if permission_to_write(api_root, id_):
             # can't I get this from the request itself?
             request_time = common.format_datetime(common.get_timestamp())
-            # for some strange reason, request.get_json() is returning
-            # a string, hence the call to json.loads() as a workaround
-            # hack...according to preliminary research, Flash only
-            # loads json when the post mime type is json, not
-            # json+stix...Cf.
-            # https://stackoverflow.com/questions/14112336/flask-request-and-application-json-content-type
-            #
+            # print(type(request.get_json(force=True)))
             status = get_backend().add_objects(api_root, id_, json.loads(request.get_json(force=True)), request_time)
             return Response(response=flask.json.dumps(status),
                             status=202,
@@ -55,7 +48,7 @@ def get_or_add_objects(api_root, id_):
             abort(403)
 
 
-@mod.route("/<string:api_root>/collections/<string:id_>/objects/<string:object_id>/", methods=["GET"])
+@mod.route("/taxii/<string:api_root>/collections/<string:id_>/objects/<string:object_id>/", methods=["GET"])
 @auth.login_required
 def get_object(api_root, id_, object_id):
     # TODO: Check if user has access to objects in collection - right now just check for permissions on the collection
