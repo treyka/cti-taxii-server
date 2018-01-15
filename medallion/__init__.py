@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_httpauth import HTTPBasicAuth
+import json
+import sys
 
 from medallion.backends.memory_backend import MemoryBackend
 
-application_instance = Flask(__name__)
+application = Flask(__name__)
 auth = HTTPBasicAuth()
 
 _CONFIG = None
@@ -62,10 +64,15 @@ def register_blueprints():
     from medallion.views import manifest
     from medallion.views import objects
 
-    application_instance.register_blueprint(collections.mod)
-    application_instance.register_blueprint(discovery.mod)
-    application_instance.register_blueprint(manifest.mod)
-    application_instance.register_blueprint(objects.mod)
+    application.register_blueprint(collections.mod)
+    application.register_blueprint(discovery.mod)
+    application.register_blueprint(manifest.mod)
+    application.register_blueprint(objects.mod)
 
+config_file_path = '/var/www/ubertaxii.com/etc/config.json'
+
+with open(config_file_path, 'r') as f:
+    set_config(json.load(f))
 
 register_blueprints()
+init_backend(get_config()['backend'])
