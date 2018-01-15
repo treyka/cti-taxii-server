@@ -16,7 +16,7 @@ def server_discovery():
     return Response(response=flask.json.dumps(get_backend().server_discovery()), status=200, mimetype=MEDIA_TYPE_TAXII_V20)
 
 
-@mod.route("/<string:api_root>/", methods=["GET"])
+@mod.route("/taxii/<string:api_root>/", methods=["GET"])
 @auth.login_required
 def get_api_root_information(api_root):
     # TODO: Check if user has access to objects in collection.
@@ -28,7 +28,7 @@ def get_api_root_information(api_root):
     abort(404)
 
 
-@mod.route("/<string:api_root>/status/<string:id_>", methods=["GET"])
+@mod.route("/taxii/<string:api_root>/status/<string:id_>", methods=["GET"])
 @auth.login_required
 def get_status(api_root, id_):
     # TODO: Check if user has access to objects in collection.

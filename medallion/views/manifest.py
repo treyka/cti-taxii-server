@@ -7,7 +7,7 @@ from medallion.views import MEDIA_TYPE_TAXII_V20
 mod = Blueprint("manifest", __name__)
 
 
-@mod.route("/<string:api_root>/collections/<string:id_>/manifest/", methods=["GET"])
+@mod.route("/taxii/<string:api_root>/collections/<string:id_>/manifest/", methods=["GET"])
 @auth.login_required
 def get_object_manifest(api_root, id_):
     # TODO: Check if user has access to objects in collection.
